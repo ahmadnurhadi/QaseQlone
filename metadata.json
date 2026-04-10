@@ -1,0 +1,5 @@
+{
+  "name": "QaseClone - Test Management Platform",
+  "description": "A comprehensive test management platform similar to Qase.io, featuring test repositories, execution tracking, AI-powered analysis, and GitHub/GitLab webhook integration.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "A testing project containing repositories and test runs.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Project name" },
+        "code": { "type": "string", "description": "Short project code (e.g. PRJ)" },
+        "description": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "code", "ownerId"]
+    },
+    "TestSuite": {
+      "title": "Test Suite",
+      "description": "A logical grouping of test cases.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "projectId": { "type": "string" },
+        "parentSuiteId": { "type": "string", "description": "Optional parent suite for nesting" }
+      },
+      "required": ["title", "projectId"]
+    },
+    "TestCase": {
+      "title": "Test Case",
+      "description": "A specific test scenario.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "expectedResult": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "status": { "type": "string", "enum": ["actual", "draft", "deprecated"] },
+        "suiteId": { "type": "string" },
+        "projectId": { "type": "string" }
+      },
+      "required": ["title", "projectId"]
+    },
+    "TestRun": {
+      "title": "Test Run",
+      "description": "An execution cycle of multiple test cases.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "completed"] },
+        "projectId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "projectId", "status"]
+    },
+    "TestResult": {
+      "title": "Test Result",
+      "description": "The outcome of a test case in a specific run.",
+      "type": "object",
+      "properties": {
+        "testCaseId": { "type": "string" },
+        "testRunId": { "type": "string" },
+        "status": { "type": "string", "enum": ["passed", "failed", "skipped", "blocked"] },
+        "comment": { "type": "string" },
+        "duration": { "type": "number", "description": "Duration in milliseconds" },
+        "executedAt": { "type": "string", "format": "date-time" },
+        "executedBy": { "type": "string" }
+      },
+      "required": ["testCaseId", "testRunId", "status"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": { "schema": "Project", "description": "Main project documents" },
+    "/projects/{projectId}/suites/{suiteId}": { "schema": "TestSuite", "description": "Suites within a project" },
+    "/projects/{projectId}/cases/{caseId}": { "schema": "TestCase", "description": "Test cases within a project" },
+    "/projects/{projectId}/runs/{runId}": { "schema": "TestRun", "description": "Test runs within a project" },
+    "/projects/{projectId}/results/{resultId}": { "schema": "TestResult", "description": "Results for test cases in runs" }
+  }
+}

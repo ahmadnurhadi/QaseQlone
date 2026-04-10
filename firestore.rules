@@ -1,0 +1,108 @@
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// Collection: projects
+// Fields:
+//   - name: string (required)
+//   - code: string (required)
+//   - description: string
+//   - ownerId: string (required)
+//   - createdAt: timestamp
+//
+// Collection: projects/{projectId}/suites
+// Fields:
+//   - title: string (required)
+//   - description: string
+//   - projectId: string (required)
+//   - parentSuiteId: string
+//
+// Collection: projects/{projectId}/cases
+// Fields:
+//   - title: string (required)
+//   - description: string
+//   - steps: list (strings)
+//   - expectedResult: string
+//   - priority: string (low, medium, high, critical)
+//   - status: string (actual, draft, deprecated)
+//   - suiteId: string
+//   - projectId: string (required)
+//
+// Collection: projects/{projectId}/runs
+// Fields:
+//   - title: string (required)
+//   - description: string
+//   - status: string (active, completed)
+//   - projectId: string (required)
+//   - createdAt: timestamp
+//   - completedAt: timestamp
+//
+// Collection: projects/{projectId}/results
+// Fields:
+//   - testCaseId: string (required)
+//   - testRunId: string (required)
+//   - status: string (passed, failed, skipped, blocked)
+//   - comment: string
+//   - duration: number
+//   - executedAt: timestamp
+//   - executedBy: string
+//
+// ===============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isProjectOwner(projectId) {
+      return isAuthenticated() && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['name', 'code', 'ownerId']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.code is string && data.code.size() > 0 && data.code.size() < 10 &&
+             data.ownerId == request.auth.uid;
+    }
+
+    match /projects/{projectId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidProject(request.resource.data);
+      allow update: if isOwner(resource.data.ownerId) && isValidProject(request.resource.data);
+      allow delete: if isOwner(resource.data.ownerId);
+
+      match /suites/{suiteId} {
+        allow read: if isAuthenticated();
+        allow write: if isProjectOwner(projectId);
+      }
+
+      match /cases/{caseId} {
+        allow read: if isAuthenticated();
+        allow write: if isProjectOwner(projectId);
+      }
+
+      match /runs/{runId} {
+        allow read: if isAuthenticated();
+        allow write: if isProjectOwner(projectId);
+      }
+
+      match /results/{resultId} {
+        allow read: if isAuthenticated();
+        allow write: if isProjectOwner(projectId);
+      }
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
