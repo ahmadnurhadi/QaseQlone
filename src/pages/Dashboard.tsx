@@ -42,17 +42,17 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">Projects</h2>
-          <p className="text-slate-500">Manage your testing repositories</p>
-        </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Create Project
-        </button>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Repositories</h2>
+            <p className="text-slate-500">Manage your testing repositories and test cases</p>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium shadow-sm"
+          >
+            <Plus className="w-4 h-4" />
+            Create Repository
+          </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -84,55 +84,67 @@ export const Dashboard: React.FC = () => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-slate-100">
-              <h3 className="text-xl font-bold text-slate-900">New Project</h3>
+            <div className="p-6 border-b border-slate-100 bg-slate-50/50">
+              <h3 className="text-xl font-bold text-slate-900">Create New Repository</h3>
+              <p className="text-xs text-slate-500 mt-1">Set up a new space for your test suites and cases.</p>
             </div>
-            <form onSubmit={handleCreateProject} className="p-6 space-y-4">
+            <form onSubmit={handleCreateProject} className="p-6 space-y-5">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-slate-700">Project Name</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-slate-700">Repository Name</label>
+                  <span className="text-[10px] text-slate-400 font-medium">Required</span>
+                </div>
                 <input 
                   required
                   type="text" 
                   value={newProject.name}
                   onChange={e => setNewProject({...newProject, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                  placeholder="e.g. Mobile App"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
+                  placeholder="e.g. E-commerce Web App"
                 />
+                <p className="text-[10px] text-slate-400">A descriptive name for your testing project.</p>
               </div>
+
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-slate-700">Project Code</label>
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-bold text-slate-700">Repository Code</label>
+                  <span className="text-[10px] text-slate-400 font-medium">Required</span>
+                </div>
                 <input 
                   required
                   type="text" 
                   maxLength={10}
                   value={newProject.code}
                   onChange={e => setNewProject({...newProject, code: e.target.value.toUpperCase()})}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-mono"
-                  placeholder="e.g. MOB"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-mono text-sm"
+                  placeholder="e.g. WEB"
                 />
+                <p className="text-[10px] text-slate-400">Short unique identifier used for test case IDs (e.g. WEB-1).</p>
               </div>
+
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-slate-700">Description</label>
+                <label className="text-sm font-bold text-slate-700">Description</label>
                 <textarea 
                   value={newProject.description}
                   onChange={e => setNewProject({...newProject, description: e.target.value})}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all h-24 resize-none"
-                  placeholder="What is this project about?"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all h-24 resize-none text-sm"
+                  placeholder="Briefly describe the scope of this repository..."
                 />
               </div>
+
               <div className="flex gap-3 pt-4">
                 <button 
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-2 border border-slate-200 rounded-md text-slate-600 hover:bg-slate-50 transition-colors font-medium"
+                  className="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors font-bold text-sm"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-colors font-medium shadow-sm"
+                  className="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors font-bold shadow-lg shadow-primary/20 text-sm"
                 >
-                  Create
+                  Create Repository
                 </button>
               </div>
             </form>
